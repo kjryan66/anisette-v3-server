@@ -152,9 +152,11 @@ int main(string[] args) {
 	if (!v1Adi.isMachineProvisioned(dsId)) {
 		log.info("Machine requires provisioning... ");
 
-		ProvisioningSession provisioningSession = new ProvisioningSession(v1Adi, v1Device);
-		provisioningSession.provision(dsId);
-		log.info("Provisioning done!");
+		try {
+			ProvisioningSession provisioningSession = new ProvisioningSession(v1Adi, v1Device);
+			provisioningSession.provision(dsId);
+			log.info("Provisioning done!");
+		} catch (Exception) {}
 	}
 
 	if (skipServerStartup) {
@@ -194,6 +196,12 @@ class AnisetteService {
 		log.info("[<<] anisette-v1 request");
 		auto time = Clock.currTime();
 
+		if (!v1Adi.isMachineProvisioned(dsId)) {
+			ProvisioningSession provisioningSession = new ProvisioningSession(v1Adi, v1Device);
+			provisioningSession.provision(dsId);
+			log.info("Provisioning done!");
+		}
+		
 		auto otp = v1Adi.requestOTP(dsId);
 
 		import std.conv;
